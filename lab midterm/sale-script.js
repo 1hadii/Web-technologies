@@ -1,7 +1,6 @@
 $(document).ready(function () {
 
   var AUTOPLAY_INTERVAL = 5000;
-  var TOTAL_CARDS = $('#product-carousel > div').length;
   var $carousel = $('#product-carousel');
 
   // Initialize Slick Carousel
@@ -32,16 +31,6 @@ $(document).ready(function () {
   });
   $('#carousel-next').on('click', function () {
     $carousel.slick('slickNext');
-  });
-
-  // Slide Counter – updates on every slide change
-  function updateCounter() {
-    var currentSlide = $carousel.slick('slickCurrentSlide') + 1;
-    $('#slide-counter').text('Showing ' + currentSlide + ' of ' + TOTAL_CARDS);
-  }
-  updateCounter();
-  $carousel.on('afterChange', function () {
-    updateCounter();
   });
 
   // AI-Enhanced Auto-Play with Hover Pause

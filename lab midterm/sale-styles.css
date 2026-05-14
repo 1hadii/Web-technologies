@@ -1,0 +1,52 @@
+/* Slick overrides for Bootstrap compatibility */
+.slick-slide { margin: 0 10px; }
+.slick-list { margin: 0 -10px; overflow: hidden; }
+.slick-track { display: flex; align-items: stretch; }
+.slick-dots li button:before { font-size: 10px; }
+.slick-dots li.slick-active button:before { color: #000; }
+
+/* Discount badge positioning */
+.discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+}
+
+/* Carousel navigation buttons */
+.carousel-nav-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.carousel-nav-btn:hover {
+  background-color: #000 !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+.btn-prev { left: -8px; }
+.btn-next { right: -8px; }
+
+/* Product image height uniformity */
+.product-img {
+  height: 320px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.card:hover .product-img {
+  transform: scale(1.05);
+}
+
+/* Progress bar custom gradient */
+.progress-bar-custom {
+  background: linear-gradient(90deg, #dc3545, #fd7e14);
+  transition: width 0.1s linear;
+}

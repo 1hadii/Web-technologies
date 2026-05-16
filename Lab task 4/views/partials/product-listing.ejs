@@ -1,0 +1,258 @@
+<%
+  /*
+   * Required locals passed from the include call:
+   *   pagePath      – e.g. "/men"
+   *   products      – array of product documents
+   *   totalProducts – total count matching filters
+   *   totalPages    – number of pages
+   *   currentPage   – current page number
+   *   limit         – products per page (8)
+   *   filters       – { search, minPrice, maxPrice, sort }
+   */
+%>
+
+<!-- ── Count + Filters Form ──────────────────────────────────────── -->
+<div class="plisting-topbar">
+  <p class="products-count">
+    <% if (totalProducts === 0) { %>
+      No products found
+    <% } else { %>
+      Showing <%= (currentPage - 1) * limit + 1 %>–<%= Math.min(currentPage * limit, totalProducts) %> of <%= totalProducts %> products
+    <% } %>
+  </p>
+</div>
+
+<form class="filters-form" method="GET" action="<%= pagePath %>">
+
+  <!-- Search -->
+  <div class="filter-group filter-search">
+    <label for="pl-search">Search</label>
+    <div class="search-wrap">
+      <input id="pl-search" type="text" name="search"
+             placeholder="Search products…"
+             value="<%= filters.search %>"
+             autocomplete="off">
+      <button type="submit" class="search-btn" aria-label="Search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Category / Product Type -->
+  <div class="filter-group">
+    <label for="pl-category">Category</label>
+    <select id="pl-category" name="subCategory" onchange="this.form.submit()">
+      <option value=""         <%= !filters.subCategory               ? 'selected' : '' %>>All</option>
+      <option value="Jackets"  <%= filters.subCategory === 'Jackets'  ? 'selected' : '' %>>Jackets</option>
+      <option value="T-Shirts" <%= filters.subCategory === 'T-Shirts' ? 'selected' : '' %>>T-Shirts</option>
+    </select>
+  </div>
+
+  <!-- Price Range -->
+  <div class="filter-group filter-price">
+    <label>Price Range (Rs.)</label>
+    <div class="price-inputs">
+      <input type="number" name="minPrice" placeholder="Min" min="0"
+             value="<%= filters.minPrice > 0 ? filters.minPrice : '' %>">
+      <span class="price-sep">–</span>
+      <input type="number" name="maxPrice" placeholder="Max" min="0"
+             value="<%= filters.maxPrice !== Infinity && filters.maxPrice > 0 ? filters.maxPrice : '' %>">
+    </div>
+  </div>
+
+
+  <!-- Apply / Reset -->
+  <div class="filter-group filter-actions">
+    <button type="submit" class="btn-apply">Apply</button>
+    <a href="<%= pagePath %>" class="btn-reset">Reset</a>
+  </div>
+
+</form>
+
+<!-- ── Active Filter Tags ─────────────────────────────────────────── -->
+<% if (filters.search || filters.subCategory || filters.minPrice > 0 || (filters.maxPrice > 0 && filters.maxPrice !== Infinity)) { %>
+  <div class="active-filters">
+    <span class="active-filters-label">Active Filters:</span>
+    <% if (filters.search) { %>
+      <span class="filter-tag">
+        Search: "<%= filters.search %>"
+        <a href="<%= pagePath %>?<%= new URLSearchParams({ subCategory: filters.subCategory || '', minPrice: filters.minPrice > 0 ? filters.minPrice : '', maxPrice: filters.maxPrice !== Infinity ? filters.maxPrice : '' }).toString() %>">&times;</a>
+      </span>
+    <% } %>
+    <% if (filters.subCategory) { %>
+      <span class="filter-tag">
+        Category: <%= filters.subCategory %>
+        <a href="<%= pagePath %>?<%= new URLSearchParams({ search: filters.search || '', minPrice: filters.minPrice > 0 ? filters.minPrice : '', maxPrice: filters.maxPrice !== Infinity ? filters.maxPrice : '' }).toString() %>">&times;</a>
+      </span>
+    <% } %>
+    <% if (filters.minPrice > 0 || (filters.maxPrice > 0 && filters.maxPrice !== Infinity)) { %>
+      <span class="filter-tag">
+        Price: Rs. <%= filters.minPrice > 0 ? filters.minPrice : '0' %> – <%= filters.maxPrice !== Infinity && filters.maxPrice > 0 ? filters.maxPrice : '∞' %>
+        <a href="<%= pagePath %>?<%= new URLSearchParams({ search: filters.search || '', subCategory: filters.subCategory || '' }).toString() %>">&times;</a>
+      </span>
+    <% } %>
+  </div>
+<% } %>
+
+
+<!-- ── Product Grid ───────────────────────────────────────────────── -->
+<% if (products.length === 0) { %>
+  <div class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h2>No Products Found</h2>
+    <p>Try adjusting your search or price range.</p>
+    <a href="<%= pagePath %>" class="btn-apply">View All</a>
+  </div>
+<% } else { %>
+  <div class="product-grid">
+    <% products.forEach(function(product) { %>
+      <div class="product-card">
+
+        <!-- Image -->
+        <div class="product-img-wrap">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.name %>" loading="lazy">
+          <% } else { %>
+            <div class="product-img-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1" stroke="#ccc">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5
+                     1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0
+                     1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0
+                     1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0
+                     .375.375 0 0 1 .75 0Z"/>
+              </svg>
+            </div>
+          <% } %>
+
+          <!-- Wishlist -->
+          <button class="product-wishlist" title="Add to Wishlist" aria-label="Add to Wishlist">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312
+                   2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9
+                   12 9 12s9-4.78 9-12Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Info -->
+        <div class="product-info">
+          <h3 class="product-name"><%= product.name %></h3>
+
+          <!-- Star Rating -->
+          <div class="product-rating" title="<%= product.rating %> out of 5">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <% if (i <= Math.floor(product.rating)) { %>
+                <span class="star star--full">★</span>
+              <% } else if (i - product.rating < 1) { %>
+                <span class="star star--half">★</span>
+              <% } else { %>
+                <span class="star star--empty">★</span>
+              <% } %>
+            <% } %>
+            <span class="rating-value"><%= product.rating.toFixed(1) %></span>
+          </div>
+
+          <div class="product-meta">
+            <span class="product-price">Rs. <%= product.price.toLocaleString() %></span>
+            <span class="product-stock <%= product.stock <= 10 ? 'product-stock--low' : '' %>">
+              <% if (product.stock === 0) { %>
+                Out of Stock
+              <% } else if (product.stock <= 10) { %>
+                Only <%= product.stock %> left!
+              <% } else { %>
+                In Stock
+              <% } %>
+            </span>
+          </div>
+
+          <button class="btn-add-to-cart" <%= product.stock === 0 ? 'disabled' : '' %>>
+            <%= product.stock === 0 ? 'Out of Stock' : 'Add to Cart' %>
+          </button>
+        </div>
+
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<!-- ── Pagination ─────────────────────────────────────────────────── -->
+<% if (totalPages > 1) { %>
+  <%
+    const baseQuery = new URLSearchParams({ search: filters.search || '', subCategory: filters.subCategory || '' });
+    if (filters.minPrice > 0)                                  baseQuery.set('minPrice', filters.minPrice);
+    if (filters.maxPrice > 0 && filters.maxPrice !== Infinity) baseQuery.set('maxPrice', filters.maxPrice);
+    const pageUrl = (p) => `${pagePath}?${baseQuery.toString()}&page=${p}`;
+  %>
+  <nav class="pagination" aria-label="Product pages">
+
+    <!-- Prev -->
+    <% if (currentPage > 1) { %>
+      <a href="<%= pageUrl(currentPage - 1) %>" class="page-btn page-btn--nav">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+        </svg>
+        Prev
+      </a>
+    <% } else { %>
+      <span class="page-btn page-btn--nav page-btn--disabled">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+        </svg>
+        Prev
+      </span>
+    <% } %>
+
+    <%
+      const maxVisible = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      let endPage   = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+    %>
+    <% if (startPage > 1) { %>
+      <a href="<%= pageUrl(1) %>" class="page-btn">1</a>
+      <% if (startPage > 2) { %><span class="page-ellipsis">…</span><% } %>
+    <% } %>
+    <% for (let p = startPage; p <= endPage; p++) { %>
+      <% if (p === currentPage) { %>
+        <span class="page-btn page-btn--active" aria-current="page"><%= p %></span>
+      <% } else { %>
+        <a href="<%= pageUrl(p) %>" class="page-btn"><%= p %></a>
+      <% } %>
+    <% } %>
+    <% if (endPage < totalPages) { %>
+      <% if (endPage < totalPages - 1) { %><span class="page-ellipsis">…</span><% } %>
+      <a href="<%= pageUrl(totalPages) %>" class="page-btn"><%= totalPages %></a>
+    <% } %>
+
+    <!-- Next -->
+    <% if (currentPage < totalPages) { %>
+      <a href="<%= pageUrl(currentPage + 1) %>" class="page-btn page-btn--nav">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+        </svg>
+      </a>
+    <% } else { %>
+      <span class="page-btn page-btn--nav page-btn--disabled">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+        </svg>
+      </span>
+    <% } %>
+
+  </nav>
+  <p class="pagination-info">Page <%= currentPage %> of <%= totalPages %></p>
+<% } %>

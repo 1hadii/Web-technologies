@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Cougar Store</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-header">
+      <h2>Cougar Admin</h2>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="/admin" class="active">Dashboard</a>
+      <a href="/admin/product/new">Add Product</a>
+      <a href="/" target="_blank">View Store</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <%- include('partials/flash-messages') %>
+    <header class="admin-header">
+      <h1>Product Dashboard</h1>
+      <a href="/admin/product/new" class="btn-primary">+ Add New Product</a>
+    </header>
+
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Sub-Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (products && products.length > 0) { %>
+            <% products.forEach(product => { %>
+              <tr>
+                <td>
+                  <% if (product.image) { %>
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="admin-product-img">
+                  <% } else { %>
+                    <div style="width:50px;height:50px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;font-size:10px;border-radius:4px;">No Img</div>
+                  <% } %>
+                </td>
+                <td><%= product.name %></td>
+                <td><%= product.category %></td>
+                <td><%= product.subCategory %></td>
+                <td>Rs. <%= product.price.toLocaleString() %></td>
+                <td>
+                  <span style="color: <%= product.stock <= 10 ? 'red' : 'green' %>; font-weight: bold;">
+                    <%= product.stock %>
+                  </span>
+                </td>
+                <td>
+                  <a href="/admin/product/edit/<%= product._id %>" class="btn-edit">Edit</a>
+                  <form action="/admin/product/delete/<%= product._id %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product? This action cannot be undone.');">
+                    <button type="submit" class="btn-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 20px;">No products found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>

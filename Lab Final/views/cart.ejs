@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart | Cougar Clothing</title>
+  <meta name="description" content="Review your selected items and proceed to checkout at Cougar Clothing.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/cart.css">
+  <link rel="icon" type="image/png"
+    href="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cougar_Favicon-C0bggmnh.png">
+</head>
+
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <p>Free Shipping on Orders Over Rs. 3,000 | Use Code: <strong>COUGAR10</strong></p>
+  </div>
+
+  <!-- ========== SIDEBAR DRAWER ========== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close">&times;</button>
+    <nav class="sidebar-nav">
+      <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+      <a href="/men">Men</a>
+      <a href="/women">Women</a>
+      <a href="/kids">Kids</a>
+    </nav>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" title="Menu">&#9776;</button>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+        <a href="/men">Men</a>
+        <a href="/women">Women</a>
+        <a href="/kids">Kids</a>
+      </nav>
+
+      <div class="logo-center">
+        <a href="/">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Group-BhvqCM7d.svg"
+            alt="Cougar Clothing Logo">
+        </a>
+      </div>
+
+      <nav class="header-icons">
+        <a href="/cart" title="Cart" class="cart-icon-link">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cart-CnL1VNMu.svg" alt="Cart"
+            class="icon">
+          <% if (cartCount > 0) { %>
+            <span class="cart-badge"><%= cartCount %></span>
+          <% } %>
+        </a>
+        <!-- User Auth -->
+        <div class="user-menu" style="display:inline-block; margin-left:10px; font-size:14px;">
+          <% if (user) { %>
+            <a href="/logout" title="Logout" style="color:#d9534f; text-decoration:none; font-weight:bold;">Logout</a> /
+            <span style="font-weight:bold; color:#333;"><%= user.name %></span>
+            <% if (user.role === 'admin') { %>
+              <a href="/admin" title="Admin" style="margin-left:5px; color:#5bc0de; text-decoration:none; font-weight:bold;">(Admin)</a>
+            <% } %>
+          <% } else { %>
+            <a href="/login" style="color:#000; text-decoration:none; font-weight:bold;">Login / Register</a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <%- include('partials/flash-messages') %>
+
+  <!-- ========== MAIN ========== -->
+  <main class="cart-page">
+    <div class="cart-page-header">
+      <h1>Your Shopping Cart</h1>
+      <% if (cartItems.length > 0) { %>
+        <p class="cart-item-count"><%= cartCount %> item<%= cartCount !== 1 ? 's' : '' %></p>
+      <% } %>
+    </div>
+
+    <% if (cartItems.length === 0) { %>
+      <!-- Empty Cart State -->
+      <div class="cart-empty">
+        <div class="cart-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          </svg>
+        </div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet. Start shopping to fill it up!</p>
+        <div class="cart-empty-actions">
+          <a href="/men" class="btn-shop">Shop Men</a>
+          <a href="/women" class="btn-shop">Shop Women</a>
+          <a href="/kids" class="btn-shop">Shop Kids</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="cart-layout">
+
+        <!-- ── Cart Items ── -->
+        <div class="cart-items-section">
+          <% cartItems.forEach(function(item) { %>
+            <div class="cart-item" id="cart-item-<%= item.productId %>">
+              <div class="cart-item-image">
+                <% if (item.image) { %>
+                  <img src="<%= item.image %>" alt="<%= item.name %>" loading="lazy">
+                <% } else { %>
+                  <div class="cart-img-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="#ccc">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                    </svg>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="cart-item-details">
+                <h3 class="cart-item-name"><%= item.name %></h3>
+                <p class="cart-item-price">Rs. <%= item.price.toLocaleString() %> each</p>
+                <% if (item.stock <= 10 && item.stock > 0) { %>
+                  <p class="cart-stock-warning">⚠️ Only <%= item.stock %> left in stock!</p>
+                <% } %>
+                <% if (item.stock === 0) { %>
+                  <p class="cart-stock-error">❌ This item is now out of stock</p>
+                <% } %>
+              </div>
+
+              <div class="cart-item-controls">
+                <!-- Quantity Controls -->
+                <div class="qty-control">
+                  <form action="/cart/update" method="POST" class="qty-form">
+                    <input type="hidden" name="productId" value="<%= item.productId %>">
+                    <button type="submit" name="action" value="decrease" class="qty-btn qty-btn--minus"
+                      <%= item.quantity <= 1 ? 'disabled' : '' %> aria-label="Decrease quantity">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10Z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                    <span class="qty-value"><%= item.quantity %></span>
+                    <button type="submit" name="action" value="increase" class="qty-btn qty-btn--plus"
+                      <%= item.quantity >= item.stock ? 'disabled' : '' %> aria-label="Increase quantity">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                      </svg>
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Line Total -->
+                <p class="cart-item-subtotal">Rs. <%= (item.price * item.quantity).toLocaleString() %></p>
+
+                <!-- Remove Button -->
+                <form action="/cart/remove" method="POST" class="remove-form">
+                  <input type="hidden" name="productId" value="<%= item.productId %>">
+                  <button type="submit" class="cart-remove-btn" title="Remove item" aria-label="Remove <%= item.name %>">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+
+          <!-- Clear Cart -->
+          <div class="cart-actions">
+            <a href="/" class="btn-continue-shopping">← Continue Shopping</a>
+            <form action="/cart/clear" method="POST">
+              <button type="submit" class="btn-clear-cart">Clear Cart</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ── Order Summary ── -->
+        <aside class="cart-summary">
+          <h2>Order Summary</h2>
+
+          <div class="summary-lines">
+            <div class="summary-line">
+              <span>Subtotal (<%= cartCount %> items)</span>
+              <span>Rs. <%= cartTotal.toLocaleString() %></span>
+            </div>
+            <div class="summary-line">
+              <span>Shipping</span>
+              <span class="<%= cartTotal >= 3000 ? 'free-shipping' : '' %>">
+                <%= cartTotal >= 3000 ? 'FREE' : 'Rs. 250' %>
+              </span>
+            </div>
+            <% if (cartTotal < 3000) { %>
+              <p class="shipping-note">Add Rs. <%= (3000 - cartTotal).toLocaleString() %> more for free shipping!</p>
+            <% } %>
+            <div class="summary-line summary-line--total">
+              <span>Total</span>
+              <span>Rs. <%= (cartTotal + (cartTotal >= 3000 ? 0 : 250)).toLocaleString() %></span>
+            </div>
+          </div>
+
+          <% if (user) { %>
+            <a href="/checkout" class="btn-checkout">
+              Proceed to Checkout
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
+          <% } else { %>
+            <a href="/login" class="btn-checkout btn-checkout--login">
+              Login to Checkout
+            </a>
+            <p class="login-note">You need to be logged in to place an order.</p>
+          <% } %>
+
+          <!-- Trust Badges -->
+          <div class="trust-badges">
+            <div class="trust-badge">
+              <span>🔒</span><span>Secure Checkout</span>
+            </div>
+            <div class="trust-badge">
+              <span>↩️</span><span>Easy Returns</span>
+            </div>
+            <div class="trust-badge">
+              <span>🚚</span><span>Fast Delivery</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    <% } %>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Customer Support</h4>
+          <ul>
+            <li><a href="mailto:info@cougar.com.pk">info@cougar.com.pk</a></li>
+            <li><a href="tel:042-32301484">042-32301484</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Get To Know Us</h4>
+          <ul>
+            <li><a href="#">Track Your Order</a></li>
+            <li><a href="#">Return & Exchange Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About Cougar</h4>
+          <ul>
+            <li><a href="#">FAQ's</a></li>
+            <li><a href="#">Shipping & Deliveries</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; Copyrights Reserved by <a href="#">Cougar Clothing</a> 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

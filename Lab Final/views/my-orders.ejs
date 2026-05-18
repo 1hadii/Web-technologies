@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders | Cougar Clothing</title>
+  <meta name="description" content="View your order history at Cougar Clothing.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/cart.css">
+  <link rel="icon" type="image/png"
+    href="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cougar_Favicon-C0bggmnh.png">
+</head>
+
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <p>Free Shipping on Orders Over Rs. 3,000 | Use Code: <strong>COUGAR10</strong></p>
+  </div>
+
+  <!-- ========== SIDEBAR DRAWER ========== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close">&times;</button>
+    <nav class="sidebar-nav">
+      <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+      <a href="/men">Men</a>
+      <a href="/women">Women</a>
+      <a href="/kids">Kids</a>
+    </nav>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" title="Menu">&#9776;</button>
+      <nav class="nav-links" id="nav-links">
+        <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+        <a href="/men">Men</a>
+        <a href="/women">Women</a>
+        <a href="/kids">Kids</a>
+      </nav>
+      <div class="logo-center">
+        <a href="/">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Group-BhvqCM7d.svg"
+            alt="Cougar Clothing Logo">
+        </a>
+      </div>
+      <nav class="header-icons">
+        <a href="/cart" title="Cart" class="cart-icon-link">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cart-CnL1VNMu.svg" alt="Cart"
+            class="icon">
+          <% if (cartCount > 0) { %>
+            <span class="cart-badge"><%= cartCount %></span>
+          <% } %>
+        </a>
+        <div class="user-menu" style="display:inline-block; margin-left:10px; font-size:14px;">
+          <% if (user) { %>
+            <a href="/logout" style="color:#d9534f; text-decoration:none; font-weight:bold;">Logout</a> /
+            <span style="font-weight:bold; color:#333;"><%= user.name %></span>
+          <% } else { %>
+            <a href="/login" style="color:#000; text-decoration:none; font-weight:bold;">Login / Register</a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <%- include('partials/flash-messages') %>
+
+  <!-- ========== MAIN ========== -->
+  <main class="cart-page">
+    <div class="cart-page-header">
+      <h1>My Orders</h1>
+      <p class="cart-item-count"><%= orders.length %> order<%= orders.length !== 1 ? 's' : '' %></p>
+    </div>
+
+    <% if (orders.length === 0) { %>
+      <div class="cart-empty">
+        <div class="cart-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+          </svg>
+        </div>
+        <h2>No orders yet</h2>
+        <p>You haven't placed any orders. Start shopping to see your order history here!</p>
+        <div class="cart-empty-actions">
+          <a href="/" class="btn-shop">Start Shopping</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="orders-list">
+        <% orders.forEach(function(order) { %>
+          <div class="order-card">
+            <div class="order-card-header">
+              <div class="order-card-meta">
+                <span class="order-id">Order #<%= order._id.toString().slice(-8).toUpperCase() %></span>
+                <span class="order-date">
+                  <%= new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                </span>
+              </div>
+              <span class="order-status-badge order-status-badge--<%= order.status %>">
+                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+              </span>
+            </div>
+
+            <div class="order-card-body">
+              <!-- Items summary -->
+              <div class="order-items-preview">
+                <% order.products.forEach(function(item) { %>
+                  <div class="order-preview-item">
+                    <% if (item.product && item.product.image) { %>
+                      <img src="<%= item.product.image %>" alt="<%= item.name || item.product.name %>" loading="lazy">
+                    <% } else { %>
+                      <div class="order-preview-placeholder"></div>
+                    <% } %>
+                    <% if (item.quantity > 1) { %>
+                      <span class="order-preview-qty">×<%= item.quantity %></span>
+                    <% } %>
+                  </div>
+                <% }); %>
+                <% if (order.products.length > 3) { %>
+                  <div class="order-preview-more">+<%= order.products.length - 3 %></div>
+                <% } %>
+              </div>
+
+              <!-- Order info -->
+              <div class="order-info-grid">
+                <div class="order-info-item">
+                  <span class="info-label">Items</span>
+                  <span class="info-value"><%= order.products.reduce((s, i) => s + i.quantity, 0) %> item(s)</span>
+                </div>
+                <div class="order-info-item">
+                  <span class="info-label">Total</span>
+                  <span class="info-value info-value--bold">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                </div>
+                <div class="order-info-item">
+                  <span class="info-label">Payment</span>
+                  <span class="info-value">Cash on Delivery</span>
+                </div>
+                <div class="order-info-item">
+                  <span class="info-label">Shipping To</span>
+                  <span class="info-value"><%= order.shippingAddress %></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ordered items detail -->
+            <div class="order-card-items">
+              <% order.products.forEach(function(item) { %>
+                <div class="order-line-item">
+                  <span class="order-line-name"><%= item.name || (item.product && item.product.name) || 'Product' %></span>
+                  <span class="order-line-qty">× <%= item.quantity %></span>
+                  <span class="order-line-price">Rs. <%= (item.price * item.quantity).toLocaleString() %></span>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+      <div style="text-align:center; margin-top: 32px;">
+        <a href="/" class="btn-checkout" style="display:inline-flex; max-width: 260px;">Continue Shopping</a>
+      </div>
+    <% } %>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Customer Support</h4>
+          <ul>
+            <li><a href="mailto:info@cougar.com.pk">info@cougar.com.pk</a></li>
+            <li><a href="tel:042-32301484">042-32301484</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; Copyrights Reserved by <a href="#">Cougar Clothing</a> 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    /* ── My Orders Page ── */
+    .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .order-card {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      transition: box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    }
+
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #f9fafb;
+      border-bottom: 1.5px solid #e5e7eb;
+    }
+
+    .order-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: #111;
+      font-size: 0.95rem;
+    }
+
+    .order-date {
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+
+    .order-card-body {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 600px) {
+      .order-card-body { grid-template-columns: 1fr; }
+    }
+
+    .order-items-preview {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .order-preview-item {
+      position: relative;
+      width: 52px;
+      height: 60px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f3f4f6;
+    }
+
+    .order-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .order-preview-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #e5e7eb;
+    }
+
+    .order-preview-qty {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 4px 0 0 0;
+    }
+
+    .order-preview-more {
+      width: 52px;
+      height: 60px;
+      border-radius: 6px;
+      background: #f3f4f6;
+      border: 1.5px dashed #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #6b7280;
+    }
+
+    .order-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+    }
+
+    .order-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .info-value {
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .info-value--bold {
+      font-weight: 700;
+      color: #111;
+    }
+
+    .order-card-items {
+      border-top: 1.5px solid #f0f0f0;
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .order-line-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .order-line-name {
+      flex: 1;
+      color: #374151;
+    }
+
+    .order-line-qty {
+      color: #9ca3af;
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .order-line-price {
+      font-weight: 600;
+      color: #111;
+      min-width: 90px;
+      text-align: right;
+    }
+  </style>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids' Collection | Cougar Clothing</title>
+  <meta name="description"
+    content="Shop Cougar Clothing's Kids' collection — tees, dungarees, frocks, hoodies and more for little ones.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/products.css">
+  <link rel="stylesheet" href="/css/cart.css">
+  <link rel="icon" type="image/png"
+    href="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cougar_Favicon-C0bggmnh.png">
+</head>
+
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <p>Free Shipping on Orders Over Rs. 3,000 | Use Code: <strong>COUGAR10</strong></p>
+  </div>
+
+  <!-- ========== SIDEBAR DRAWER ========== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close">&times;</button>
+    <nav class="sidebar-nav">
+      <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+      <a href="/men">Men</a>
+      <a href="/women">Women</a>
+      <a href="/kids">Kids</a>
+    </nav>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" title="Menu">&#9776;</button>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+        <a href="/men">Men</a>
+        <a href="/women">Women</a>
+        <a href="/kids">Kids</a>
+      </nav>
+
+      <div class="logo-center">
+        <a href="/">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Group-BhvqCM7d.svg"
+            alt="Cougar Clothing Logo">
+        </a>
+      </div>
+
+      <nav class="header-icons">
+        <button class="icon-btn" title="Search">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </button>
+        <a href="/cart" title="Cart" class="cart-icon-link">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cart-CnL1VNMu.svg" alt="Cart"
+            class="icon">
+          <% if (cartCount > 0) { %>
+            <span class="cart-badge"><%= cartCount %></span>
+          <% } %>
+        </a>
+        <!-- User Auth -->
+        <div class="user-menu" style="display:inline-block; margin-left:10px; font-size:14px;">
+          <% if (user) { %>
+            <a href="/logout" title="Logout" style="color:#d9534f; text-decoration:none; font-weight:bold;">Logout</a> / 
+            <span style="font-weight:bold; color:#333;"><%= user.name %></span>
+            <% if (user.role === 'admin') { %>
+              <a href="/admin" title="Admin" style="margin-left:5px; color:#5bc0de; text-decoration:none; font-weight:bold;">(Admin)</a>
+            <% } %>
+            <a href="/orders" style="margin-left:8px; color:#374151; text-decoration:none; font-weight:bold;">My Orders</a>
+          <% } else { %>
+            <a href="/login" style="color:#000; text-decoration:none; font-weight:bold;">Login / Register</a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <%- include('partials/flash-messages') %>
+
+  <!-- ========== MAIN ========== -->
+  <main class="products-page">
+
+    <!-- Category Hero -->
+    <div class="cat-hero cat-hero--kids">
+      <div class="cat-hero-content">
+        <span class="cat-hero-label">Collection</span>
+        <h1>Kids'</h1>
+      </div>
+    </div>
+
+    <%- include('partials/product-listing', { pagePath: '/kids' , products, totalProducts, totalPages, currentPage,
+      limit, filters }) %>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Customer Support</h4>
+          <ul>
+            <li><a href="#">Store Locator</a></li>
+            <li><a href="mailto:info@cougar.com.pk">info@cougar.com.pk</a></li>
+            <li><a href="tel:042-32301484">042-32301484</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Get To Know Us</h4>
+          <ul>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Track Your Order</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Return &amp; Exchange Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About Cougar</h4>
+          <ul>
+            <li><a href="#">FAQ'S</a></li>
+            <li><a href="#">Log in/Sign Up</a></li>
+            <li><a href="#">Shipping &amp; Deliveries</a></li>
+            <li><a href="#">Blogs &amp; News</a></li>
+          </ul>
+        </div>
+        <div class="newsletter-col">
+          <h4>Sign Up For Our Newsletter</h4>
+          <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" aria-label="Subscribe">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </form>
+          <p class="newsletter-text">Subscribe for offers and updates.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; Copyrights Reserved by <a href="#">Cougar Clothing</a> 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

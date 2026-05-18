@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed! | Cougar Clothing</title>
+  <meta name="description" content="Thank you for your order at Cougar Clothing!">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/cart.css">
+  <link rel="icon" type="image/png"
+    href="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cougar_Favicon-C0bggmnh.png">
+</head>
+
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <p>Free Shipping on Orders Over Rs. 3,000 | Use Code: <strong>COUGAR10</strong></p>
+  </div>
+
+  <!-- ========== SIDEBAR DRAWER ========== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close">&times;</button>
+    <nav class="sidebar-nav">
+      <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+      <a href="/men">Men</a>
+      <a href="/women">Women</a>
+      <a href="/kids">Kids</a>
+    </nav>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" title="Menu">&#9776;</button>
+      <nav class="nav-links" id="nav-links">
+        <a href="/onsale-products" class="sale-link" style="color: #ff4757; font-weight: bold; margin-right: 15px;">Promo Sale</a>
+        <a href="/sale" class="sale-link">Sale</a>
+        <a href="/men">Men</a>
+        <a href="/women">Women</a>
+        <a href="/kids">Kids</a>
+      </nav>
+      <div class="logo-center">
+        <a href="/">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Group-BhvqCM7d.svg"
+            alt="Cougar Clothing Logo">
+        </a>
+      </div>
+      <nav class="header-icons">
+        <a href="/cart" title="Cart" class="cart-icon-link">
+          <img src="https://cdn.shopify.com/oxygen-v2/48131/89657/185047/3004679/assets/Cart-CnL1VNMu.svg" alt="Cart"
+            class="icon">
+        </a>
+        <div class="user-menu" style="display:inline-block; margin-left:10px; font-size:14px;">
+          <% if (user) { %>
+            <a href="/logout" style="color:#d9534f; text-decoration:none; font-weight:bold;">Logout</a> /
+            <span style="font-weight:bold; color:#333;"><%= user.name %></span>
+          <% } else { %>
+            <a href="/login" style="color:#000; text-decoration:none; font-weight:bold;">Login / Register</a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main class="order-confirmation-page">
+
+    <div class="confirmation-card">
+      <!-- Success Icon -->
+      <div class="confirmation-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+            clip-rule="evenodd" />
+        </svg>
+      </div>
+
+      <h1>Order Placed Successfully!</h1>
+      <p class="confirmation-msg">Thank you for shopping with Cougar Clothing. Your order has been received and is being prepared.</p>
+
+      <!-- Order Details -->
+      <div class="order-details-box">
+        <div class="order-detail-row">
+          <span>Order ID</span>
+          <strong>#<%= order._id.toString().slice(-8).toUpperCase() %></strong>
+        </div>
+        <div class="order-detail-row">
+          <span>Status</span>
+          <span class="order-status-badge order-status-badge--pending">Pending</span>
+        </div>
+        <div class="order-detail-row">
+          <span>Payment</span>
+          <span>Cash on Delivery</span>
+        </div>
+        <div class="order-detail-row">
+          <span>Shipping To</span>
+          <span><%= order.shippingAddress %></span>
+        </div>
+        <div class="order-detail-row order-detail-row--total">
+          <span>Order Total</span>
+          <strong>Rs. <%= order.totalAmount.toLocaleString() %></strong>
+        </div>
+      </div>
+
+      <!-- Ordered Items -->
+      <div class="confirmation-items">
+        <h3>Items Ordered</h3>
+        <% order.products.forEach(function(item) { %>
+          <div class="conf-item">
+            <span class="conf-item-name"><%= item.name %></span>
+            <span class="conf-item-qty">× <%= item.quantity %></span>
+            <span class="conf-item-price">Rs. <%= (item.price * item.quantity).toLocaleString() %></span>
+          </div>
+        <% }); %>
+      </div>
+
+      <div class="confirmation-actions">
+        <a href="/" class="btn-back-home">Continue Shopping</a>
+        <a href="/orders" class="btn-view-orders">View My Orders</a>
+      </div>
+
+      <p class="confirmation-contact">
+        Questions? Contact us at <a href="mailto:info@cougar.com.pk">info@cougar.com.pk</a> or call <a href="tel:042-32301484">042-32301484</a>
+      </p>
+    </div>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; Copyrights Reserved by <a href="#">Cougar Clothing</a> 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

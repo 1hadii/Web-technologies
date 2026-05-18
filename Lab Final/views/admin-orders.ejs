@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Order Management | Cougar Store</title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-header">
+      <h2>Cougar Admin</h2>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="/admin">Products</a>
+      <a href="/admin/orders" class="active">Orders</a>
+      <a href="/admin/product/new">Add Product</a>
+      <a href="/" target="_blank">View Store</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <%- include('partials/flash-messages') %>
+    <header class="admin-header">
+      <h1>Order Management</h1>
+      <p style="color: #666; font-weight: 500;"><%= orders.length %> total order(s) placed</p>
+    </header>
+
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (orders && orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+              <tr style="border-bottom: 1.5px solid #eee;">
+                <td>
+                  <strong>#<%= order._id.toString().slice(-8).toUpperCase() %></strong>
+                  <% if (order.notes) { %>
+                    <div style="font-size: 11px; color: #d97706; margin-top: 4px; max-width: 180px;">
+                      ⚠️ Note: "<%= order.notes %>"
+                    </div>
+                  <% } %>
+                </td>
+                <td>
+                  <div style="font-weight: 600;"><%= order.user ? order.user.name : 'Unknown User' %></div>
+                  <div style="font-size: 12px; color: #888;"><%= order.user ? order.user.email : '' %></div>
+                  <div style="font-size: 11px; color: #666; margin-top: 4px; max-width: 200px; word-wrap: break-word;">
+                    📍 <%= order.shippingAddress %>
+                  </div>
+                </td>
+                <td style="font-size: 13px;">
+                  <%= new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) %>
+                </td>
+                <td>
+                  <div style="font-size: 12px;">
+                    <% order.products.forEach(item => { %>
+                      <div style="margin-bottom: 2px;">
+                        • <%= item.name || 'Product' %> <strong>×<%= item.quantity %></strong>
+                      </div>
+                    <% }) %>
+                  </div>
+                </td>
+                <td>
+                  <strong style="color: #111;">Rs. <%= order.totalAmount.toLocaleString() %></strong>
+                </td>
+                <td>
+                  <span class="order-status-badge order-status-badge--<%= order.status %>">
+                    <%= order.status %>
+                  </span>
+                </td>
+                <td>
+                  <!-- Order Status Update Form -->
+                  <form action="/admin/order/status/<%= order._id %>" method="POST" style="display: flex; gap: 6px; align-items: center;">
+                    <select name="status" class="form-control" style="padding: 4px 8px; font-size: 12px; height: 30px; width: 110px; min-width: 110px;">
+                      <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                      <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                      <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                      <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                      <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    </select>
+                    <button type="submit" class="btn-primary" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; height: 30px; line-height: 22px;">
+                      Update
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 40px; color: #888;">No orders found in the system.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>
